@@ -1,52 +1,60 @@
-# API Testing Portfolio
+# REST API Testing & Automation Portfolio
 
-A small, runnable API testing project built with Postman, Newman, and GitHub Actions. The example suite tests the public [JSONPlaceholder](https://jsonplaceholder.typicode.com/) API and demonstrates functional checks, negative testing, response validation, and automated HTML reporting.
+An end-to-end QA case study combining test design, automated Postman assertions, Newman reporting, and continuous execution with GitHub Actions.
 
-## Project structure
+## Objective
 
-```text
-api-testing-portfolio/
-├── README.md
-├── postman/
-│   ├── collection.json
-│   └── environment.json
-├── test-cases/
-│   └── api-test-cases.md
-├── reports/
-│   └── test-report.html
-├── bug-reports/
-│   └── bugs.md
-└── .github/
-    └── workflows/
-        └── api-tests.yml
-```
+Demonstrate a client-reviewable API testing workflow: understand risk, document meaningful scenarios, automate regression checks, report evidence, and distinguish genuine defects from test-system limitations.
 
-## What is covered
+## System under test
 
-- Retrieve a collection of posts
-- Retrieve one post and validate its fields
-- Create a post and validate the submitted values
-- Verify a missing resource returns `404`
-- Check JSON content types and response times
+[JSONPlaceholder](https://jsonplaceholder.typicode.com/) is a public fake REST API containing posts, comments, albums, photos, todos, and users. It supports testing resources, queries, relationships, contracts, and simulated writes without credentials or private data.
+
+## Test strategy and scope
+
+The collection covers positive retrieval, missing and malformed identifiers, filtering, pagination, nested resources, data types, headers, response time, and simulated `POST`, `PUT`, `PATCH`, and `DELETE` operations. Authentication, authorization, persistence, concurrency, and load testing are out of scope because the system does not expose those capabilities.
+
+The suite contains **16 request-level cases and more than 40 automated assertions**. Each request inherits JSON content-type and two-second response-time checks. See [the test cases](test-cases/api-test-cases.md) for the rationale and expected results.
+
+## Tools
+
+- Postman collection format 2.1
+- Newman and the `htmlextra` HTML reporter
+- GitHub Actions for push, pull-request, and manual CI runs
 
 ## Run locally
 
-Requirements: Node.js 20 or newer.
+Install Node.js 20 or newer, then run:
 
 ```bash
-npx newman run postman/collection.json \
-  -e postman/environment.json \
-  -r cli,html \
-  --reporter-html-export reports/test-report.html
+npx --package newman --package newman-reporter-htmlextra \
+  newman run postman/collection.json \
+  --environment postman/environment.json \
+  --reporters cli,htmlextra \
+  --reporter-htmlextra-export reports/test-report.html
 ```
 
-Open `reports/test-report.html` in a browser after the run. The committed report is a lightweight placeholder and is replaced by Newman when the suite runs.
+Open `reports/test-report.html` for the generated visual report.
 
-## Continuous integration
+## Results and findings
 
-The GitHub Actions workflow runs on pushes, pull requests, and manual dispatches. It uploads the generated HTML report as a workflow artifact even when an API assertion fails.
+Confirmed defects belong in [the findings log](bug-reports/bugs.md) only after reproduction and comparison with documented behavior. JSONPlaceholder **simulates writes**: write responses do not permanently change server data. A later `GET` not reflecting a write is expected behavior, not a defect. Its permissive fake backend is also unsuitable for demonstrating real validation and authorization failures.
 
-## Notes
+## CI/CD
 
-JSONPlaceholder simulates write operations: a `POST` request returns a created representation but does not permanently store it. This is expected behavior, not a defect.
+The workflow runs on pushes to `main`, pull requests, and manual dispatches. It uploads the HTML report for 14 days even after assertion failures, preserving evidence for investigation.
 
+## Repository structure
+
+```text
+api-testing-portfolio/
+├── postman/                 # Executable collection and environment
+├── test-cases/              # Client-readable test design
+├── reports/                 # Generated HTML evidence
+├── bug-reports/             # Findings and defect template
+└── .github/workflows/       # CI execution
+```
+
+## Portfolio evidence
+
+Capture the Postman folders, a successful Newman terminal run, the generated HTML summary, and the successful GitHub Actions job. Screenshots should come from a real execution rather than fabricated static proof.
