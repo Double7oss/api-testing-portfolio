@@ -1,0 +1,127 @@
+{
+  "info": {
+    "_postman_id": "cb058f5a-d8a3-42fa-abd4-ace85c9e00d0",
+    "name": "API Testing Portfolio - JSONPlaceholder",
+    "description": "Portfolio test suite covering read, create, validation, negative, and performance scenarios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "GET all posts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts",
+              "host": ["{{base_url}}"],
+              "path": ["posts"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response is JSON', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json'));",
+                  "pm.test('Returns a non-empty list', () => { const body = pm.response.json(); pm.expect(body).to.be.an('array').that.is.not.empty; });",
+                  "pm.test('Every post has required fields', () => { pm.response.json().forEach(post => { pm.expect(post).to.have.all.keys('userId', 'id', 'title', 'body'); }); });",
+                  "pm.test('Response time is below 2000 ms', () => pm.expect(pm.response.responseTime).to.be.below(2000));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET one post",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts/{{post_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["posts", "{{post_id}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Post ID matches the request', () => pm.expect(pm.response.json().id).to.eql(Number(pm.environment.get('post_id'))));",
+                  "pm.test('Post fields have expected types', () => { const body = pm.response.json(); pm.expect(body.userId).to.be.a('number'); pm.expect(body.title).to.be.a('string').and.not.empty; pm.expect(body.body).to.be.a('string').and.not.empty; });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST create post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"API testing portfolio\",\n  \"body\": \"Created by an automated Postman test\",\n  \"userId\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/posts",
+              "host": ["{{base_url}}"],
+              "path": ["posts"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Created post contains an ID', () => pm.expect(pm.response.json().id).to.be.a('number'));",
+                  "pm.test('Submitted values are returned', () => { const body = pm.response.json(); pm.expect(body.title).to.eql('API testing portfolio'); pm.expect(body.userId).to.eql(1); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET missing post",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/posts/999999",
+              "host": ["{{base_url}}"],
+              "path": ["posts", "999999"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Missing resource returns an empty object', () => pm.expect(pm.response.json()).to.eql({}));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
