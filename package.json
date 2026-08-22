@@ -1,0 +1,17 @@
+{
+  "name": "api-testing-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Automated REST API testing portfolio using Postman, Newman, and GitHub Actions.",
+  "scripts": {
+    "test": "newman run postman/collection.json --environment postman/environment.json --reporters cli,htmlextra --reporter-htmlextra-export reports/test-report.html",
+    "test:cli": "newman run postman/collection.json --environment postman/environment.json --reporters cli"
+  },
+  "devDependencies": {
+    "newman": "^6.2.2",
+    "newman-reporter-htmlextra": "^1.23.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

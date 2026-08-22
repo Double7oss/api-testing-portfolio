@@ -43,14 +43,11 @@ The suite contains **16 request-level cases and 67 automated assertions**. Each 
 Install Node.js 20 or newer, then run:
 
 ```bash
-npx --package newman --package newman-reporter-htmlextra \
-  newman run postman/collection.json \
-  --environment postman/environment.json \
-  --reporters cli,htmlextra \
-  --reporter-htmlextra-export reports/test-report.html
+npm install
+npm test
 ```
 
-Open `reports/test-report.html` for the generated visual report.
+`npm test` runs all requests and assertions and creates `reports/test-report.html`. Use `npm run test:cli` when you only need terminal output and do not want to replace the HTML report.
 
 ## Results and findings
 
